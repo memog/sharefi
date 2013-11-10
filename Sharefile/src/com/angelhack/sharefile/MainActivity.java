@@ -267,7 +267,7 @@ public class MainActivity extends Activity {
                 Integer numberOfCycles = 0;
                 while(searchingForSharedWifi){
                     enableAp();
-                    sleep(30000);
+                    sleep(60000);
                     disableAp();
                     sleep(1000);
                     List<ScanResult> accessPoints = getAccessPoints();
