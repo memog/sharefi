@@ -2,6 +2,10 @@ package com.angelhack.sharefile;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.util.Log;
 import android.view.Menu;
 import android.webkit.WebView;
 
@@ -14,6 +18,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -21,6 +26,7 @@ import android.webkit.WebView;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 
 public class MainActivity extends Activity {
     public class WebAppInterface {
@@ -65,7 +71,8 @@ public class MainActivity extends Activity {
     boolean searchingForSharedWifi = false;
     boolean sharingEnabled = false;
     boolean currentlySharing = false;
-
+    private Handler handler = new Handler();
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -74,10 +81,44 @@ public class MainActivity extends Activity {
         webView = (WebView) findViewById(R.id.webView);
         webView.loadUrl("file:///android_asset/login.html");
 
+        // runnable.run();
+        
         wifiApManager = new WifiApManager(this);
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         currentNetConfig = new WifiConfiguration();
 
+	}
+	
+
+	private Runnable runnable = new Runnable() 
+	{
+
+	    public void run() 
+	    {
+  
+	         handler.postDelayed(this, 3000);  
+	        //	 showNotification("sharefi-me","Se encontro red sharefi",MainActivity.this);
+	    }
+	};
+	
+	public static void showNotification( String contentTitle, String contentText, Context arg0 ) {
+		int icon = R.drawable.ic_launcher;
+        long when = System.currentTimeMillis();
+        
+        Notification notification = new Notification(icon, contentTitle, when);
+
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notification.defaults |= Notification.DEFAULT_LIGHTS;
+        Intent notificationIntent = new Intent(arg0, MainActivity.class);
+        notificationIntent.putExtra("EnterBool", true);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(arg0, 0, notificationIntent, 0);
+        notification.setLatestEventInfo(arg0, contentTitle, contentText, contentIntent);
+        
+        NotificationManager mNoficiation = (NotificationManager)arg0.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNoficiation.notify(1, notification);
 	}
 
     public void requestWifiShare(){
