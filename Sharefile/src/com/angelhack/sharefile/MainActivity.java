@@ -2,11 +2,13 @@ package com.angelhack.sharefile;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.os.Handler;
 import android.webkit.*;
 
 import android.content.Context;
@@ -93,6 +95,7 @@ public class MainActivity extends Activity {
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setDatabasePath("/data/data/com.angelhack.sharefile/databases/");
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
+        Handler handler = new Handler();
 
         Random rand = new Random();
         rand.setSeed(System.currentTimeMillis());
@@ -128,7 +131,6 @@ public class MainActivity extends Activity {
 
         if(hasInternetConnection = isNetworkAvailable()){
             webView.loadUrl("file:///android_asset/login.html");
-            fastSharing();
         }else{
             webView.loadUrl("file:///android_asset/home.html");
         }
@@ -159,6 +161,7 @@ public class MainActivity extends Activity {
         //wifiConnectToAccessPoint(sr);
         //startSharing();
         //getAccessPoints();
+        fastSharing();
 	}
 
     private boolean isNetworkAvailable() {
@@ -204,7 +207,7 @@ public class MainActivity extends Activity {
                         if(clientsCount>0 && connectedClients==0){//Se acaba de conectar el primer cliente
                             if(!firstClientConnected){
                                 //TODO notify that first user has connected
-                                startCountdown();
+                                //startCountdown();
                                 firstClientConnected = true;
                             }
                         }
@@ -235,7 +238,7 @@ public class MainActivity extends Activity {
         }).start();
     }
 
-    public void startCountdown(){
+    public void start0down(){
         new Thread(new Runnable() {
             public void run() {
                 sleep(2000);
@@ -400,13 +403,10 @@ public class MainActivity extends Activity {
 
         //TODO generate pass
         Integer networkId =  wifiManager.addNetwork(wifiConnectConfiguration);
-        sleep(2000);
+        sleep(4000);
         wifiManager.disconnect();
-        sleep(2000);
-        wifiManager.enableNetwork(networkId, true);
-        sleep(2000);
-        wifiManager.reconnect();
-        sleep(2000);
+        sleep(4000);
+        new asyncConnect().execute(networkId.toString());
     }
 
     public List<ScanResult> filterAccessPoints(List<ScanResult> accessPoints,String SSIDPrefix){
@@ -500,5 +500,30 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         return hash;
+    }
+
+    class asyncConnect extends AsyncTask<String, String, String> {
+
+        String netId;
+        protected void onPreExecute() {
+
+        }
+
+        protected String doInBackground(String... params) {
+            sleep(3000);
+            netId = params[0];
+            wifiManager.enableNetwork(Integer.valueOf(netId), true);
+            sleep(3000);
+            wifiManager.reconnect();
+            sleep(3000);
+            return "lol";
+        }
+
+        protected void onPostExecute() {
+
+
+
+        }
+
     }
 }
