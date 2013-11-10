@@ -5,11 +5,8 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.util.Log;
-import android.view.Menu;
 import android.webkit.WebView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,11 +14,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,19 +32,30 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void requestWifiShare() {
-            requestWifiShare();
+            new Thread(new Runnable() {
+                public void run() {
+                    requestWifiShare();
+                }
+            }).start();
         }
 
         @JavascriptInterface
         public void enableWifiSharing() {
-            startSharing();
+            new Thread(new Runnable() {
+                public void run() {
+                    startSharing();
+                }
+            }).start();
         }
 
         @JavascriptInterface
         public void disableWifiSharing() {
-            stopSharing();
+            new Thread(new Runnable() {
+                public void run() {
+                    stopSharing();
+                }
+            }).start();
         }
-
     }
 
     WifiApManager wifiApManager;
@@ -69,9 +73,9 @@ public class MainActivity extends Activity {
     final String REQUEST_SSID = REQUEST_FILTER+"-"+USER_IDENTIFIER;
 
     boolean searchingForSharedWifi = false;
-    boolean sharingEnabled = false;
+    boolean sharingLookupEnabled = false;
     boolean currentlySharing = false;
-    private Handler handler = new Handler();
+
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,25 +85,22 @@ public class MainActivity extends Activity {
         webView = (WebView) findViewById(R.id.webView);
         webView.loadUrl("file:///android_asset/login.html");
 
-        // runnable.run();
-        
+
+
         wifiApManager = new WifiApManager(this);
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         currentNetConfig = new WifiConfiguration();
 
+
+
+        new Thread(new Runnable() {
+            public void run() {
+                startSharing();
+            }
+        }).start();
+
 	}
-	
 
-	private Runnable runnable = new Runnable() 
-	{
-
-	    public void run() 
-	    {
-  
-	         handler.postDelayed(this, 3000);  
-	        //	 showNotification("sharefi-me","Se encontro red sharefi",MainActivity.this);
-	    }
-	};
 	
 	public static void showNotification( String contentTitle, String contentText, Context arg0 ) {
 		int icon = R.drawable.ic_launcher;
@@ -122,13 +123,13 @@ public class MainActivity extends Activity {
 	}
 
     public void requestWifiShare(){
-        searchingForSharedWifi=true;
+        searchingForSharedWifi = true;
         currentNetConfig.SSID = REQUEST_SSID;
         currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
         enableAp();
         Integer numberOfCycles = 0;
         while(searchingForSharedWifi){
-            sleep(60000);
+            sleep(20000);
             List<ScanResult> accessPoints = getAccessPoints();
             List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
             if(filteredAccessPoints.size()>0){
@@ -142,21 +143,21 @@ public class MainActivity extends Activity {
     }
 
     public void startSharing(){
-        sharingEnabled = true;
-        while(sharingEnabled){
+        sharingLookupEnabled = true;
+        while(sharingLookupEnabled){
             List<ScanResult> accessPoints = getAccessPoints();
             List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,REQUEST_FILTER);
             if(filteredAccessPoints.size()>0){
-                sharingEnabled =false;
+                currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
+                currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                enableAp();
+                currentlySharing=true;
+                sharingLookupEnabled=false;
+                sleep(1000);
                 break;
             }
-            sleep(60000);
+            sleep(15000);
         }
-        currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
-        currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-        enableAp();
-        currentlySharing=true;
-        sleep(1000);
     }
 
     public void stopSharing(){
@@ -211,18 +212,18 @@ public class MainActivity extends Activity {
         boolean apWasEnabled = wifiApManager.isWifiApEnabled();
         if(apWasEnabled){
             disableAp();
-            sleep(2000);
+            sleep(1000);
         }
         boolean wifiEnabled = wifiManager.setWifiEnabled(true);
-        sleep(5000);
+        sleep(1000);
         wifiManager.startScan();
-        sleep(20000);
+        sleep(10000);
         results =  wifiManager.getScanResults();
         boolean wifiDisabled = wifiManager.setWifiEnabled(false);
-        sleep(2000);
+        sleep(1000);
         if(apWasEnabled){
             enableAp();
-            sleep(2000);
+            sleep(1000);
         }
         return results;
     }
