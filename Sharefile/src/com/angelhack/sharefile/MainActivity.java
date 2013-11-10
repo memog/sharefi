@@ -384,8 +384,10 @@ public class MainActivity extends Activity {
     }
 
     public void wifiConnectToAccessPoint(ScanResult accessPoint){
-        wifiManager.setWifiEnabled(true);
         disableAp();
+        sleep(1000);
+        wifiManager.setWifiEnabled(true);
+
         sleep(2500);
         WifiConfiguration wifiConnectConfiguration = new WifiConfiguration();
 
