@@ -259,10 +259,11 @@ public class MainActivity extends Activity {
                 enableAp();
                 Integer numberOfCycles = 0;
                 while(searchingForSharedWifi){
-                    sleep(15000);
+                    sleep(7000);
                     List<ScanResult> accessPoints = getAccessPoints();
                     List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
                     if(filteredAccessPoints.size()>0){
+                        disableAp();
                         ScanResult bestAccessPointAvailable = getBestResult(filteredAccessPoints);
                         wifiConnectToAccessPoint(bestAccessPointAvailable);
                         connectedToSharedWifi = true;
@@ -369,18 +370,18 @@ public class MainActivity extends Activity {
         boolean apWasEnabled = wifiApManager.isWifiApEnabled();
         if(apWasEnabled){
             disableAp();
-            sleep(200);
+            sleep(100);
         }
         boolean wifiEnabled = wifiManager.setWifiEnabled(true);
-        sleep(200);
+        sleep(100);
         wifiManager.startScan();
-        sleep(15000);
+        sleep(7);
         results =  wifiManager.getScanResults();
         boolean wifiDisabled = wifiManager.setWifiEnabled(false);
-        sleep(200);
+        sleep(100);
         if(apWasEnabled){
             enableAp();
-            sleep(200);
+            sleep(100);
         }
         return results;
     }
