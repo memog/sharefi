@@ -1,11 +1,8 @@
 /* GENERAL */
-*{
-    font-size: 16px;
-    color: #ffffff;
-}
 html{
     height: 100%;
     width: 100%;
+    color: #ffffff;
 }
 .margin-left{margin-left: 5px;}
 .margin-left-2x{margin-left: 10px;}
@@ -13,6 +10,9 @@ html{
 .margin-right{margin-right: 5px;}
 .margin-right-2x{margin-right: 10px;}
 
+.color-share-fi{
+    color: #910480;
+}
 .btn.btn-share-fi{
     background-color: #910480;
     border-color: #910480;
@@ -50,6 +50,10 @@ html{
     background-image: url('/img/sb.png');
     background-position: center;
     background-size: auto 65px;
+}
+strong.title{
+    font-size: 18px;
+    color: #ffffff;
 }
 
 /* NAVIGATION BAR */
@@ -120,12 +124,18 @@ html{
     margin:0 auto;
 }
 .big-icon-container{
-    margin-top: 30px;
+    margin-top: 50px;
+}
+.big-icon-container i{
     font-size: 100px;
-    color: #ffffff;
+    color:#ffffff;
 }
 
 /* SEARCHING */
+.searching-title-container{
+    margin-top: 60px;
+    color: #ffffff;
+}
 .searching-body{
     background-image: url('/img/coffee.JPG');
     height: 100%;
@@ -140,6 +150,7 @@ html{
 .searching-message{
     font-family: Consolas;
     margin-top: 30px;
+    color: #ffffff;
 }
 .searching-message .main{
     font-size: 20px;
@@ -153,16 +164,41 @@ html{
 }
 
 /* CONNECTED */
-.searching-title-container{
-    margin-top: 60px;
-}
 .connected-limit-container{
     margin: 20px 0;
 }
 .connected-limit-container .limit{
     font-size: 20px;
+    color: #ffffff;
 }
 .connected-limit-container .current{
     font-size: 80px;
     line-height: 80px;
+    color: #ffffff;
+}
+
+/* THANK YOU */
+
+/* SETTINGS */
+#settings-form{
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+#settings-form label{
+    font-weight: normal;
+    color: #ffffff;
+}
+#settings-form .form-group{
+    margin-bottom: 20px;
+}
+#settings-form option{
+    color: #666666 !important;
+}
+
+/* PROFILE */
+#rewards-panel{
+    color: #444;
+}
+#rewards-panel button{
+    margin-top: -4px;
 }

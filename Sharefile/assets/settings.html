@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Share-fi!</title>
+
+    <!-- CSS FILES -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+</head>
+<body class="template-body">
+    <div class="container">
+        <nav class="navbar navbar-share-fi navbar-fixed-top" role="navigation">
+            <ul class="nav navbar-nav share-fi-navbar">
+                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-home"></i></a></li>
+                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-user"></i></a></li>
+                <li class="share-fi-navbar-btn active"><a href="#"><i class="fa fa-cog"></i></a></li>
+            </ul>
+        </nav>
+        <div class="row searching-title-container">
+            <div class="col-xs-10 col-xs-offset-1 text-center">
+                <strong class="title">Settings</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+                <form id="settings-form" role="form">
+                    <div class="form-group">
+                        <label>Minimum battery percentage</label>
+                        <select class="form-control">
+                            <option value="30">30%</option>
+                            <option value="50">50%</option>
+                            <option value="70">70%</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Maximum time</label>
+                        <select class="form-control">
+                            <option value="30">5 minutes</option>
+                            <option value="50">10 minutes</option>
+                            <option value="70">15 minutes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Maximum data</label>
+                        <select class="form-control">
+                            <option value="30">5 mb</option>
+                            <option value="50">10 mb</option>
+                            <option value="70">30 mb</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <button class="btn btn-share-fi">Save settings</button>
+            </div>
+        </div>
+    </div>
+    <div class="sponsor-container"></div>
+</body>
+    <!-- JS FILES -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+</html>
