@@ -86,6 +86,7 @@ public class MainActivity extends Activity {
         webView.getSettings().setAllowFileAccessFromFileURLs(true); //Maybe you don't need this rule
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setDatabasePath("/data/data/com.angelhack.sharefile/databases/");
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
         webView.setWebViewClient(new WebViewClient() {
@@ -122,7 +123,7 @@ public class MainActivity extends Activity {
         currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
         currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
 
-        enableAp();
+        //enableAp();
         //requestWifiShare();
         //currentlySharingWifi = true;
         //clientsWatcher();
