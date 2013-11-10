@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 
 public class MainActivity extends Activity {
@@ -59,11 +60,11 @@ public class MainActivity extends Activity {
     final String APP_PREFIX = "SHFI";
     final String DONATE_PREFIX = "D";
     final String REQUEST_PREFIX = "R";
-    final String USER_IDENTIFIER = "TEST777";
+    String USER_IDENTIFIER;
     final String DONATE_FILTER = APP_PREFIX+"-"+DONATE_PREFIX;
     final String REQUEST_FILTER = APP_PREFIX+"-"+REQUEST_PREFIX;
-    final String DONATE_SSID = DONATE_FILTER+"-"+USER_IDENTIFIER;
-    final String REQUEST_SSID = REQUEST_FILTER+"-"+USER_IDENTIFIER;
+    String DONATE_SSID;
+    String REQUEST_SSID;
 
     boolean searchingForSharedWifi = false;
     boolean sharingLookupEnabled = false;
@@ -91,6 +92,12 @@ public class MainActivity extends Activity {
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setDatabasePath("/data/data/com.angelhack.sharefile/databases/");
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
+
+        Random rand = new Random();
+        int n = rand.nextInt(10000) + 1;
+        USER_IDENTIFIER = "TEST"+n;
+        DONATE_SSID = DONATE_FILTER+"-"+USER_IDENTIFIER;
+        REQUEST_SSID = REQUEST_FILTER+"-"+USER_IDENTIFIER;
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -149,7 +156,7 @@ public class MainActivity extends Activity {
         //ScanResult sr = getBestResult(list);
         //wifiConnectToAccessPoint(sr);
         startSharing();
-
+        //getAccessPoints();
 	}
 
     private boolean isNetworkAvailable() {
@@ -266,6 +273,7 @@ public class MainActivity extends Activity {
                 currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
                 Integer numberOfCycles = 0;
                 while(searchingForSharedWifi){
+                    sleep(1000);
                     enableAp();
                     sleep(60000);
                     disableAp();
@@ -295,13 +303,16 @@ public class MainActivity extends Activity {
                 resetSharingVars();
                 sharingLookupEnabled = true;
                 while(sharingLookupEnabled){
+                    sleep(2000);
                     List<ScanResult> accessPoints = getAccessPoints();
                     List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,REQUEST_FILTER);
                     if(filteredAccessPoints.size()>0){
                         currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
                         //currentNetConfig.preSharedKey = "\"olakase123\"";
                         currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                        sleep(1000);
                         enableAp();
+                        sleep(1000);
                         currentlySharingWifi = true;
                         sharingLookupEnabled=false;
                         sleep(500);
@@ -392,7 +403,7 @@ public class MainActivity extends Activity {
             sleep(300);
         }
         boolean wifiEnabled = wifiManager.setWifiEnabled(true);
-        sleep(300);
+        sleep(1000);
         wifiManager.startScan();
         sleep(10000);
         results =  wifiManager.getScanResults();
