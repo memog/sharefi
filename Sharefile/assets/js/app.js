@@ -236,3 +236,7 @@ function disconnet(){
     localStorage.removeItem('remaining-data');
     changeLocation('thankYou.html');
 }
+
+function messageFromAndroid(eventName,data){
+
+}

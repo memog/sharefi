@@ -119,6 +119,7 @@ public class MainActivity extends Activity {
 
         if(hasInternetConnection = isNetworkAvailable()){
             webView.loadUrl("file:///android_asset/login.html");
+            startSharing();
         }else{
             webView.loadUrl("file:///android_asset/home.html");
         }
@@ -142,8 +143,12 @@ public class MainActivity extends Activity {
         //wifiManager.setWifiEnabled(false);
         //requestWifiShare();
         //currentlySharingWifi = true;
-        //clientsWatcher();
-        //internetWatcher();
+        clientsWatcher();
+        internetWatcher();
+        //List<ScanResult> list = filterAccessPoints(getAccessPoints(),DONATE_FILTER);
+        //ScanResult sr = getBestResult(list);
+        //wifiConnectToAccessPoint(sr);
+
 	}
 
     private boolean isNetworkAvailable() {
@@ -251,7 +256,7 @@ public class MainActivity extends Activity {
 
 
     public void requestWifiShare(){
-        if(searchingForSharedWifi || connectedToSharedWifi || isNetworkAvailable())return;
+        if(searchingForSharedWifi || connectedToSharedWifi)return;
 
         new Thread(new Runnable() {//Clients watcher
             public void run() {
@@ -280,7 +285,7 @@ public class MainActivity extends Activity {
     }
 
     public void startSharing(){
-        if(currentlySharingWifi || sharingLookupEnabled || !isNetworkAvailable())return;//It is already searching for connections
+        if(currentlySharingWifi || sharingLookupEnabled)return;//It is already searching for connections
 
         new Thread(new Runnable() {//Clients watcher
             public void run() {
@@ -326,6 +331,7 @@ public class MainActivity extends Activity {
 
     public void wifiConnectToAccessPoint(ScanResult accessPoint){
         wifiManager.setWifiEnabled(true);
+        sleep(2500);
         WifiConfiguration wifiConnectConfiguration = new WifiConfiguration();
 
         /*wifiConnectConfiguration.hiddenSSID = true;
@@ -410,8 +416,8 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void messageFromTheUnderworld(String eventName,String data){
-        webView.loadUrl("javascript:messageFromTheUnderworld('"+eventName+"','"+data+"')");
+    public void messageFromAndroid(String eventName,String data){
+        webView.loadUrl("javascript:messageFromAndroid('"+eventName+"','"+data+"')");
     }
 
     String sha1Hash( String toHash )
