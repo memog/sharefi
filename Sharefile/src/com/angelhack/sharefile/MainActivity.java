@@ -135,13 +135,14 @@ public class MainActivity extends Activity {
 
         currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
         currentNetConfig.preSharedKey  = sha1Hash(currentNetConfig.SSID);
-        disableAp();
-        sleep(500);
-        wifiManager.setWifiEnabled(false);
+        enableAp();
+        //disableAp();
+        //sleep(500);
+        //wifiManager.setWifiEnabled(false);
         //requestWifiShare();
         //currentlySharingWifi = true;
-        clientsWatcher();
-        internetWatcher();
+        //clientsWatcher();
+        //internetWatcher();
 	}
 
     private boolean isNetworkAvailable() {
@@ -345,6 +346,7 @@ public class MainActivity extends Activity {
 
     public List<ScanResult> filterAccessPoints(List<ScanResult> accessPoints,String SSIDPrefix){
         List<ScanResult> results = new ArrayList<ScanResult>();
+        if(accessPoints==null)return results;
         for(Iterator<ScanResult> i = accessPoints.iterator(); i.hasNext(); ) {
             ScanResult item = i.next();
             String ssid = item.SSID;
@@ -375,7 +377,7 @@ public class MainActivity extends Activity {
         boolean wifiEnabled = wifiManager.setWifiEnabled(true);
         sleep(100);
         wifiManager.startScan();
-        sleep(7);
+        sleep(7000);
         results =  wifiManager.getScanResults();
         boolean wifiDisabled = wifiManager.setWifiEnabled(false);
         sleep(100);
