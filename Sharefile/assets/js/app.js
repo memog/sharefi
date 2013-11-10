@@ -1,6 +1,8 @@
 var sessionToken = false;
 
 $(document).ready(function(){
+    $.support.cors = true;
+
     var loggedIn = false;
     if(view == 'settings' || view == 'profile'){
         sessionToken = getToken();
@@ -67,6 +69,8 @@ function login(email, password){
     $.ajax({
         type: "POST",
         url: "http://sharefi.net/api/account/authenticate.php",
+        cache: false,
+        crossDomain: true,
         data:{email: email, password:password}
     }).done(function(resp) {
             var obj = $.parseJSON(resp);
