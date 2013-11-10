@@ -94,6 +94,7 @@ public class MainActivity extends Activity {
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
         Random rand = new Random();
+        rand.setSeed(System.currentTimeMillis());
         int n = rand.nextInt(10000) + 1;
         USER_IDENTIFIER = "TEST"+n;
         DONATE_SSID = DONATE_FILTER+"-"+USER_IDENTIFIER;
