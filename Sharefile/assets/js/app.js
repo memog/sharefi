@@ -1,5 +1,5 @@
 var sessionToken = false;
-
+alert("FTW");
 $(document).ready(function(){
     saveToken('ola k ase?')
     sessionToken = getTokenFromCookie();

@@ -1,11 +1,14 @@
 package com.angelhack.sharefile;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.webkit.WebView;
+import android.os.Handler;
+import android.webkit.*;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +17,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
-import android.webkit.JavascriptInterface;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -63,6 +65,7 @@ public class MainActivity extends Activity {
     WifiConfiguration currentNetConfig;
     WebView webView;
 
+
     final String APP_PREFIX = "SHFI";
     final String DONATE_PREFIX = "D";
     final String REQUEST_PREFIX = "R";
@@ -76,31 +79,85 @@ public class MainActivity extends Activity {
     boolean sharingLookupEnabled = false;
     boolean currentlySharing = false;
 
+    Integer connectedClients = 0;
+
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-        webView = (WebView) findViewById(R.id.webView);
-        webView.loadUrl("file:///android_asset/login.html");
-
-
-
         wifiApManager = new WifiApManager(this);
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         currentNetConfig = new WifiConfiguration();
 
+        webView = (WebView)findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
-
-        new Thread(new Runnable() {
-            public void run() {
-                startSharing();
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return false;
             }
-        }).start();
 
+            @Override
+            public void onPageFinished(WebView view, String url) {
+
+            }
+
+            /*@Override
+            public WebResourceResponse shouldInterceptRequest (final WebView view, String url) {
+                String filePath = url.substring(url.indexOf(appUrl)+appUrl.length());
+                try {
+                    return new WebResourceResponse("text/css", "UTF-8", getAssets().open("style.css"));
+                } catch (IOException e) {
+                    return super.shouldInterceptRequest(view, url);
+                }
+            }*/
+        });
+
+        webView.setWebChromeClient(new WebChromeClient());
+
+        if(isNetworkAvailable() || true){
+            webView.loadUrl("file:///android_asset/login.html");
+        }else{
+            webView.loadUrl("file:///android_asset/home.html");
+        }
+
+        //currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
+        //currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+        //enableAp();
+
+        clientsWatcher();
 	}
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void clientsWatcher(){
+        new Thread(new Runnable() {//Clients watcher
+            public void run() {
+                while(true){
+                    ArrayList clients =  wifiApManager.getClientList(true,1000);
+                    Integer clientsCount = clients.size();
+                    if(clientsCount>0 && connectedClients==0){
+
+                    }
+                    if(clientsCount!=connectedClients){
+                        showNotification("Share-fi",clientsCount.toString()+" usuario conectado",MainActivity.this);
+                        connectedClients = clientsCount;
+                    }
+                    sleep(30000);
+                }
+            }
+        }).start();
+    }
 	
 	public static void showNotification( String contentTitle, String contentText, Context arg0 ) {
 		int icon = R.drawable.ic_launcher;
@@ -109,7 +166,6 @@ public class MainActivity extends Activity {
         Notification notification = new Notification(icon, contentTitle, when);
 
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notification.defaults |= Notification.DEFAULT_SOUND;
         notification.defaults |= Notification.DEFAULT_VIBRATE;
         notification.defaults |= Notification.DEFAULT_LIGHTS;
         Intent notificationIntent = new Intent(arg0, MainActivity.class);
@@ -121,6 +177,7 @@ public class MainActivity extends Activity {
         NotificationManager mNoficiation = (NotificationManager)arg0.getSystemService(Context.NOTIFICATION_SERVICE);
         mNoficiation.notify(1, notification);
 	}
+
 
     public void requestWifiShare(){
         searchingForSharedWifi = true;
@@ -143,6 +200,7 @@ public class MainActivity extends Activity {
     }
 
     public void startSharing(){
+        connectedClients = 0;
         sharingLookupEnabled = true;
         while(sharingLookupEnabled){
             List<ScanResult> accessPoints = getAccessPoints();
@@ -163,6 +221,7 @@ public class MainActivity extends Activity {
     public void stopSharing(){
         currentlySharing=false;
         disableAp();
+        connectedClients = 0;
         sleep(1000);
     }
 
