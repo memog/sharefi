@@ -17,6 +17,9 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,17 +35,17 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public void requestWifiShare() {
+        public void uiRequestWifiShare() {
             requestWifiShare();
         }
 
         @JavascriptInterface
-        public void enableWifiSharing() {
+        public void uiEnableWifiSharing() {
             startSharing();
         }
 
         @JavascriptInterface
-        public void disableWifiSharing() {
+        public void uiDisableWifiSharing() {
             stopSharing();
         }
     }
@@ -120,13 +123,25 @@ public class MainActivity extends Activity {
             webView.loadUrl("file:///android_asset/home.html");
         }
 
-        currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
-        currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
 
-        //enableAp();
+        currentNetConfig.hiddenSSID = false;
+        currentNetConfig.status = WifiConfiguration.Status.ENABLED;
+        currentNetConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        currentNetConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        currentNetConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        currentNetConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+        currentNetConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+
+        currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
+        currentNetConfig.preSharedKey  = sha1Hash(currentNetConfig.SSID);
+        disableAp();
+        sleep(500);
+        wifiManager.setWifiEnabled(false);
         //requestWifiShare();
         //currentlySharingWifi = true;
-        //clientsWatcher();
+        clientsWatcher();
+        internetWatcher();
 	}
 
     private boolean isNetworkAvailable() {
@@ -184,7 +199,7 @@ public class MainActivity extends Activity {
                             showNotification("Share-fi",clientsCount.toString()+" usuario conectado",MainActivity.this);
                             connectedClients = clientsCount;
                         }
-                        sleep(30000);
+                        sleep(15000);
                     }
                 }
             }
@@ -239,12 +254,12 @@ public class MainActivity extends Activity {
         new Thread(new Runnable() {//Clients watcher
             public void run() {
                 searchingForSharedWifi = true;
-                currentNetConfig.SSID = REQUEST_SSID;
-                currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                currentNetConfig.SSID = "\""+REQUEST_SSID+"\"";
+                currentNetConfig.preSharedKey = sha1Hash(currentNetConfig.SSID);
                 enableAp();
                 Integer numberOfCycles = 0;
                 while(searchingForSharedWifi){
-                    sleep(20000);
+                    sleep(15000);
                     List<ScanResult> accessPoints = getAccessPoints();
                     List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
                     if(filteredAccessPoints.size()>0){
@@ -273,14 +288,14 @@ public class MainActivity extends Activity {
                     List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,REQUEST_FILTER);
                     if(filteredAccessPoints.size()>0){
                         currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
-                        currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                        currentNetConfig.preSharedKey = sha1Hash(currentNetConfig.SSID);
                         enableAp();
                         currentlySharingWifi = true;
                         sharingLookupEnabled=false;
-                        sleep(1000);
+                        sleep(200);
                         break;
                     }
-                    sleep(15000);
+                    sleep(10000);
                 }
             }
         }).start();
@@ -292,7 +307,7 @@ public class MainActivity extends Activity {
                 currentlySharingWifi =false;
                 disableAp();
                 resetSharingVars();
-                sleep(1000);
+                sleep(200);
             }
         }).start();
     }
@@ -307,8 +322,19 @@ public class MainActivity extends Activity {
 
     public void wifiConnectToAccessPoint(ScanResult accessPoint){
         WifiConfiguration wifiConnectConfiguration = new WifiConfiguration();
-        wifiConnectConfiguration.SSID = "\""+accessPoint.SSID+"\"";//WTF
-        wifiConnectConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+
+        wifiConnectConfiguration.hiddenSSID = false;
+        wifiConnectConfiguration.status = WifiConfiguration.Status.ENABLED;
+        wifiConnectConfiguration.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        wifiConnectConfiguration.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        wifiConnectConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        wifiConnectConfiguration.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        wifiConnectConfiguration.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+        wifiConnectConfiguration.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+
+        wifiConnectConfiguration.SSID = "\""+accessPoint.SSID+"\"";
+        wifiConnectConfiguration.preSharedKey  = sha1Hash(accessPoint.SSID);
+
         //TODO generate pass
         Integer networkId =  wifiManager.addNetwork(wifiConnectConfiguration);
         wifiManager.disconnect();
@@ -343,18 +369,18 @@ public class MainActivity extends Activity {
         boolean apWasEnabled = wifiApManager.isWifiApEnabled();
         if(apWasEnabled){
             disableAp();
-            sleep(1000);
+            sleep(200);
         }
         boolean wifiEnabled = wifiManager.setWifiEnabled(true);
-        sleep(1000);
+        sleep(200);
         wifiManager.startScan();
-        sleep(10000);
+        sleep(15000);
         results =  wifiManager.getScanResults();
         boolean wifiDisabled = wifiManager.setWifiEnabled(false);
-        sleep(1000);
+        sleep(200);
         if(apWasEnabled){
             enableAp();
-            sleep(1000);
+            sleep(200);
         }
         return results;
     }
@@ -381,4 +407,30 @@ public class MainActivity extends Activity {
         webView.loadUrl("javascript:messageFromTheUnderworld('"+eventName+"','"+data+"')");
     }
 
+    String sha1Hash( String toHash )
+    {
+        String hash = null;
+        try
+        {
+            MessageDigest digest = MessageDigest.getInstance( "SHA-1" );
+            byte[] bytes = toHash.getBytes("UTF-8");
+            digest.update(bytes, 0, bytes.length);
+            bytes = digest.digest();
+            StringBuilder sb = new StringBuilder();
+            for( byte b : bytes )
+            {
+                sb.append( String.format("%02X", b) );
+            }
+            hash = sb.toString();
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            e.printStackTrace();
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            e.printStackTrace();
+        }
+        return hash;
+    }
 }

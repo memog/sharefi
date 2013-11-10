@@ -15,7 +15,7 @@ $(document).ready(function(){
         }
     }else if(view == 'searching'){
         startHotspotTimeout();
-        // TODO: call android function
+        if(Android && Android.uiRequestWifiShare)Android.uiRequestWifiShare();
     }else if(view = 'connected'){
         setConnectedVars();
     }else if(view == 'login'){

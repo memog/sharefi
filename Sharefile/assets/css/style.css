@@ -47,7 +47,7 @@ html{
     height: 65px;
     width: 100%;
     z-index: 100;
-    background-image: url('img/sb.png');
+    background-image: url('../img/sb.png');
     background-position: center;
     background-size: auto 65px;
 }
@@ -137,7 +137,7 @@ strong.title{
     color: #ffffff;
 }
 .searching-body{
-    background-image: url('img/coffee.JPG');
+    background-image: url('../img/coffee.JPG');
     height: 100%;
     width: 100%;
     background-position: center;
