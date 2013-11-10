@@ -267,7 +267,7 @@ public class MainActivity extends Activity {
                 enableAp();
                 Integer numberOfCycles = 0;
                 while(searchingForSharedWifi){
-                    sleep(7000);
+                    sleep(30000);
                     List<ScanResult> accessPoints = getAccessPoints();
                     List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
                     if(filteredAccessPoints.size()>0){
@@ -302,10 +302,10 @@ public class MainActivity extends Activity {
                         enableAp();
                         currentlySharingWifi = true;
                         sharingLookupEnabled=false;
-                        sleep(200);
+                        sleep(500);
                         break;
                     }
-                    sleep(10000);
+                    sleep(5000);
                 }
             }
         }).start();
@@ -383,18 +383,18 @@ public class MainActivity extends Activity {
         boolean apWasEnabled = wifiApManager.isWifiApEnabled();
         if(apWasEnabled){
             disableAp();
-            sleep(100);
+            sleep(300);
         }
         boolean wifiEnabled = wifiManager.setWifiEnabled(true);
-        sleep(100);
+        sleep(300);
         wifiManager.startScan();
-        sleep(7000);
+        sleep(15000);
         results =  wifiManager.getScanResults();
         boolean wifiDisabled = wifiManager.setWifiEnabled(false);
-        sleep(100);
+        sleep(300);
         if(apWasEnabled){
             enableAp();
-            sleep(100);
+            sleep(300);
         }
         return results;
     }
