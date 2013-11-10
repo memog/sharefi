@@ -83,6 +83,8 @@ public class MainActivity extends Activity {
 
         webView = (WebView)findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAllowFileAccessFromFileURLs(true); //Maybe you don't need this rule
+        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
@@ -119,11 +121,11 @@ public class MainActivity extends Activity {
 
         currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
         currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-        disableAp();
+
         enableAp();
         //requestWifiShare();
-        currentlySharingWifi = true;
-        clientsWatcher();
+        //currentlySharingWifi = true;
+        //clientsWatcher();
 	}
 
     private boolean isNetworkAvailable() {
@@ -138,11 +140,19 @@ public class MainActivity extends Activity {
                 boolean internetAvailable = isNetworkAvailable();
                 if(hasInternetConnection!=internetAvailable){
                     if(internetAvailable){//Se conecto
-                        if(connectedToSharedWifi){//Se conecto a la red donada
+                        if(connectedToSharedWifi){
+
+                        }
+                        if(currentlySharingWifi){
 
                         }
                     }else{//Se desconecto
+                        if(connectedToSharedWifi){
 
+                        }
+                        if(currentlySharingWifi){
+
+                        }
                     }
                 }
                 hasInternetConnection=internetAvailable;
@@ -255,7 +265,7 @@ public class MainActivity extends Activity {
 
         new Thread(new Runnable() {//Clients watcher
             public void run() {
-                connectedClients = 0;
+                resetSharingVars();
                 sharingLookupEnabled = true;
                 while(sharingLookupEnabled || isNetworkAvailable()){
                     List<ScanResult> accessPoints = getAccessPoints();
