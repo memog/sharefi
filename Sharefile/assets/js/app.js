@@ -15,7 +15,10 @@ $(document).ready(function(){
         }
     }else if(view == 'searching'){
         startHotspotTimeout();
-        if(Android && Android.uiRequestWifiShare)Android.uiRequestWifiShare();
+        setTimeout(function(){
+            //if(Android && Android.uiRequestWifiShare)Android.uiRequestWifiShare();
+            hotspotFound(5,10)
+        },10000);
     }else if(view = 'connected'){
         setConnectedVars();
     }else if(view == 'login'){
@@ -127,7 +130,7 @@ function findHotspot(){
 }
 
 function startHotspotTimeout(){
-    timeout = setTimeout(function(){hotspotNotFound();}, 10000);
+    timeout = setTimeout(function(){hotspotNotFound();}, 100000);
     return true;
 }
 
@@ -213,6 +216,7 @@ function setConnectedVars(){
 
 // functions called from android
 function hotspotFound(time, data){
+
     var timestamp = new Date().getTime();
     localStorage.setItem('total-time', time);
     localStorage.setItem('end-time', timestamp+time*60*1000);
@@ -238,5 +242,6 @@ function disconnet(){
 }
 
 function messageFromAndroid(eventName,data){
-
+    alert(eventName)
+    //webView.loadUrl("javascript:messageFromAndroid('"+eventName+"','"+data+"')");
 }

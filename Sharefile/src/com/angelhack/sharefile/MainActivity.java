@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void uiRequestWifiShare() {
+            //messageFromAndroid("test","test");
             fastRequestWifiShare();
         }
 
@@ -78,7 +79,6 @@ public class MainActivity extends Activity {
 
     Integer connectedClients = 0;
 
-    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -161,7 +161,7 @@ public class MainActivity extends Activity {
         //wifiConnectToAccessPoint(sr);
         //startSharing();
         //getAccessPoints();
-        fastSharing();
+        //fastSharing();
 	}
 
     private boolean isNetworkAvailable() {
@@ -206,13 +206,13 @@ public class MainActivity extends Activity {
                         Integer clientsCount = clients.size();
                         if(clientsCount>0 && connectedClients==0){//Se acaba de conectar el primer cliente
                             if(!firstClientConnected){
-                                //TODO notify that first user has connected
-                                //startCountdown();
+                                webView.loadUrl("javascript:addUserPoints(1000)");
+                                startCountdown();
                                 firstClientConnected = true;
                             }
                         }
                         if(clientsCount==0 && connectedClients>0){//Se desconectaron todos los usuarios
-                            String a = "a";
+                            String msg = "everybody disconnected";
 
                         }
                         if(clientsCount!=connectedClients){
@@ -222,6 +222,16 @@ public class MainActivity extends Activity {
                         sleep(15000);
                     }
                 }
+            }
+        }).start();
+    }
+
+    public void startCountdown(){
+        new Thread(new Runnable() {//Clients watcher
+            public void run() {
+                sleep(5*60*1000);
+                disableAp();
+                resetSharingVars();
             }
         }).start();
     }
@@ -238,15 +248,7 @@ public class MainActivity extends Activity {
         }).start();
     }
 
-    public void start0down(){
-        new Thread(new Runnable() {
-            public void run() {
-                sleep(2000);
-                disableAp();
-                resetSharingVars();
-            }
-        }).start();
-    }
+
 
     public void resetSharingVars(){
         sharingLookupEnabled = false;
@@ -313,26 +315,26 @@ public class MainActivity extends Activity {
     }
 
     public void fastRequestWifiShare(){
-        new Thread(new Runnable() {//Clients watcher
-            public void run() {
-                searchingForSharedWifi = true;
-                Integer numberOfCycles = 0;
-                while(searchingForSharedWifi){
-                    List<ScanResult> accessPoints = getAccessPoints();
-                    List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
-                    if(filteredAccessPoints.size()>0){
-                        ScanResult bestAccessPointAvailable = getBestResult(filteredAccessPoints);
-                        wifiConnectToAccessPoint(bestAccessPointAvailable);
-                        connectedToSharedWifi = true;
-                        //TODO notify ui that connection has been made! AHUEVO!
-                        searchingForSharedWifi=false;
-                        break;
-                    }
-                    if(numberOfCycles++>50)break;
-                    sleep(3000);
-                }
+
+        searchingForSharedWifi = true;
+        Integer numberOfCycles = 0;
+        while(searchingForSharedWifi){
+            List<ScanResult> accessPoints = getAccessPoints();
+            List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
+            if(filteredAccessPoints.size()>0){
+                ScanResult bestAccessPointAvailable = getBestResult(filteredAccessPoints);
+                wifiConnectToAccessPoint(bestAccessPointAvailable);
+                connectedToSharedWifi = true;
+                webView.loadUrl("javascript:hotspotFound(5, 10)");
+                searchingForSharedWifi=false;
+                break;
             }
-        }).start();
+            if(numberOfCycles++>50){
+                webView.loadUrl("javascript:hotspotNotFound()");
+                break;
+            }
+            sleep(3000);
+        }
     }
 
     public void startSharing(){
@@ -384,11 +386,10 @@ public class MainActivity extends Activity {
     }
 
     public void wifiConnectToAccessPoint(ScanResult accessPoint){
-        disableAp();
-        sleep(1000);
+
+
         wifiManager.setWifiEnabled(true);
 
-        sleep(2500);
         WifiConfiguration wifiConnectConfiguration = new WifiConfiguration();
 
         /*wifiConnectConfiguration.hiddenSSID = true;
@@ -406,10 +407,13 @@ public class MainActivity extends Activity {
 
         //TODO generate pass
         Integer networkId =  wifiManager.addNetwork(wifiConnectConfiguration);
-        sleep(4000);
+
         wifiManager.disconnect();
-        sleep(4000);
-        new asyncConnect().execute(networkId.toString());
+
+        wifiManager.enableNetwork(networkId, true);
+
+        wifiManager.reconnect();
+
     }
 
     public List<ScanResult> filterAccessPoints(List<ScanResult> accessPoints,String SSIDPrefix){
@@ -503,30 +507,5 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         return hash;
-    }
-
-    class asyncConnect extends AsyncTask<String, String, String> {
-
-        String netId;
-        protected void onPreExecute() {
-
-        }
-
-        protected String doInBackground(String... params) {
-            sleep(3000);
-            netId = params[0];
-            wifiManager.enableNetwork(Integer.valueOf(netId), true);
-            sleep(3000);
-            wifiManager.reconnect();
-            sleep(3000);
-            return "lol";
-        }
-
-        protected void onPostExecute() {
-
-
-
-        }
-
     }
 }
