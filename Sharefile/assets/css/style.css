@@ -1,0 +1,48 @@
+/* GENERAL */
+.margin-left{margin-left: 5px;}
+.margin-left-2x{margin-left: 10px;}
+
+.margin-right{margin-right: 5px;}
+.margin-right-2x{margin-right: 10px;}
+
+.btn.btn-share-fi{
+    background-color: #910480;
+    border-color: #910480;
+    color:#FFF;
+}
+.btn.btn-share-fi:hover{
+    background-color: #78036a;
+    border-color: #78036a;
+}
+
+.icon-container{
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+.icon-container img{
+    margin: 0 auto;
+    max-width: 180px;
+}
+/* LOGIN */
+.template-body{
+    height: 100%;
+    width: 100%;
+    background: #5d5d5d; /* Old browsers */
+    background: -moz-radial-gradient(center, ellipse cover,  #5d5d5d 0%, #3b3b3b 100%); /* FF3.6+ */
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#5d5d5d), color-stop(100%,#3b3b3b)); /* Chrome,Safari4+ */
+    background: -webkit-radial-gradient(center, ellipse cover,  #5d5d5d 0%,#3b3b3b 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-radial-gradient(center, ellipse cover,  #5d5d5d 0%,#3b3b3b 100%); /* Opera 12+ */
+    background: -ms-radial-gradient(center, ellipse cover,  #5d5d5d 0%,#3b3b3b 100%); /* IE10+ */
+    background: radial-gradient(ellipse at center,  #5d5d5d 0%,#3b3b3b 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5d5d5d', endColorstr='#3b3b3b',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+.login-button-container{
+    width: 100%;
+}
+.login-button-container .btn{
+    padding: 6px 40px;
+}
+.login-forgot-link, .login-forgot-link:hover{
+    color: #FFF;
+    font-size: 11px;
+}
