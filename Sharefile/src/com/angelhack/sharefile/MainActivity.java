@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
     final String APP_PREFIX = "SHFI";
     final String DONATE_PREFIX = "D";
     final String REQUEST_PREFIX = "R";
-    final String USER_IDENTIFIER = "TESTKAT";
+    final String USER_IDENTIFIER = "TEST777";
     final String DONATE_FILTER = APP_PREFIX+"-"+DONATE_PREFIX;
     final String REQUEST_FILTER = APP_PREFIX+"-"+REQUEST_PREFIX;
     final String DONATE_SSID = DONATE_FILTER+"-"+USER_IDENTIFIER;
@@ -124,17 +124,18 @@ public class MainActivity extends Activity {
         }
 
 
-        currentNetConfig.hiddenSSID = true;
+        /*currentNetConfig.hiddenSSID = true;
         currentNetConfig.status = WifiConfiguration.Status.ENABLED;
         currentNetConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
         currentNetConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
         currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
         currentNetConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
         currentNetConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-        currentNetConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+        currentNetConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);*/
 
         currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
-        currentNetConfig.preSharedKey  = "\"olakase123\"";
+        currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        //currentNetConfig.preSharedKey  = "\"olakase123\"";
         //enableAp();
         //disableAp();
         //sleep(500);
@@ -256,7 +257,7 @@ public class MainActivity extends Activity {
             public void run() {
                 searchingForSharedWifi = true;
                 currentNetConfig.SSID = "\""+REQUEST_SSID+"\"";
-                currentNetConfig.preSharedKey = "\"olakase123\"";
+                currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
                 enableAp();
                 Integer numberOfCycles = 0;
                 while(searchingForSharedWifi){
@@ -290,7 +291,8 @@ public class MainActivity extends Activity {
                     List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,REQUEST_FILTER);
                     if(filteredAccessPoints.size()>0){
                         currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
-                        currentNetConfig.preSharedKey = "\"olakase123\"";
+                        //currentNetConfig.preSharedKey = "\"olakase123\"";
+                        currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
                         enableAp();
                         currentlySharingWifi = true;
                         sharingLookupEnabled=false;
@@ -326,17 +328,18 @@ public class MainActivity extends Activity {
         wifiManager.setWifiEnabled(true);
         WifiConfiguration wifiConnectConfiguration = new WifiConfiguration();
 
-        wifiConnectConfiguration.hiddenSSID = true;
+        /*wifiConnectConfiguration.hiddenSSID = true;
         wifiConnectConfiguration.status = WifiConfiguration.Status.ENABLED;
         wifiConnectConfiguration.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
         wifiConnectConfiguration.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
         wifiConnectConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
         wifiConnectConfiguration.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
         wifiConnectConfiguration.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-        wifiConnectConfiguration.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+        wifiConnectConfiguration.allowedProtocols.set(WifiConfiguration.Protocol.RSN);*/
 
         wifiConnectConfiguration.SSID = "\""+accessPoint.SSID+"\"";
-        wifiConnectConfiguration.preSharedKey  = "\"\"olakase123\"\"";
+        currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        //wifiConnectConfiguration.preSharedKey  = "\"\"olakase123\"\"";
 
         //TODO generate pass
         Integer networkId =  wifiManager.addNetwork(wifiConnectConfiguration);
