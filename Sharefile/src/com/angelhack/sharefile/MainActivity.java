@@ -323,6 +323,7 @@ public class MainActivity extends Activity {
     }
 
     public void wifiConnectToAccessPoint(ScanResult accessPoint){
+        wifiManager.setWifiEnabled(true);
         WifiConfiguration wifiConnectConfiguration = new WifiConfiguration();
 
         wifiConnectConfiguration.hiddenSSID = false;
