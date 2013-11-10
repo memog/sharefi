@@ -18,6 +18,12 @@ $(document).ready(function(){
         // TODO: call android function
     }else if(view = 'connected'){
         setConnectedVars();
+    }else if(view == 'login'){
+        sessionToken = getToken();
+        loggedIn = validateToken(sessionToken);
+        if(loggedIn){
+            changeLocation('profile.html');
+        }
     }
 });
 
@@ -121,9 +127,7 @@ function findHotspot(){
 }
 
 function startHotspotTimeout(){
-    //timeout = setTimeout(function(){hotspotNotFound();}, 10000);
-    timeout = setTimeout(function(){hotspotFound(5, 10);}, 3000);
-
+    timeout = setTimeout(function(){hotspotNotFound();}, 10000);
     return true;
 }
 
@@ -173,9 +177,15 @@ function saveSettings(){
 }
 
 function putSettings(){
-    $('#settings-val-battery').val(localStorage.getItem('val-battery'));
-    $('#settings-val-time').val(localStorage.getItem('val-time'));
-    $('#settings-val-data').val(localStorage.getItem('val-data'));
+    var battery = localStorage.getItem('val-battery');
+    var time = localStorage.getItem('val-time');
+    var data = localStorage.getItem('val-data');
+    if(!battery > 0) battery = 30;
+    if(!time > 0) time = 15;
+    if(!data > 0) data = 30;
+    $('#settings-val-battery').val(battery);
+    $('#settings-val-time').val(time);
+    $('#settings-val-data').val(data);
     return true;
 }
 
