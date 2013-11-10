@@ -1,4 +1,12 @@
 /* GENERAL */
+*{
+    font-size: 16px;
+    color: #ffffff;
+}
+html{
+    height: 100%;
+    width: 100%;
+}
 .margin-left{margin-left: 5px;}
 .margin-left-2x{margin-left: 10px;}
 
@@ -21,8 +29,60 @@
 }
 .icon-container img{
     margin: 0 auto;
-    max-width: 180px;
+    max-width: 160px;
 }
+.title-container{
+    margin-top: 120px;
+}
+.explanation-container{
+    margin-top: 30px;
+    margin-bottom: 50px;
+    color: #ffffff;
+    font-size: 16px;
+}
+.sponsor-container{
+    position: absolute;
+    bottom: 0;
+    height: 65px;
+    width: 100%;
+    z-index: 100;
+    background-image: url('/img/sb.png');
+    background-position: center;
+    background-size: auto 65px;
+}
+
+/* NAVIGATION BAR */
+.navbar{min-height: 20px !important;}
+.navbar-share-fi{
+    background-color: #5d5d5d !important;
+    border: none;
+}
+
+.navbar-nav{
+    margin: 0;
+}
+.share-fi-navbar{
+    width: 100%;
+}
+.navbar-share-fi a{
+    color: #ffffff;
+    padding: 7px 0 !important;
+}
+.share-fi-navbar li{
+    width: 33.3333%;
+    text-align: center;
+    font-size: 24px;
+    float: left;
+    color: #ffffff;
+}
+.share-fi-navbar-btn:hover{
+    background-color: #5d5d5d !important;
+}
+.share-fi-navbar-btn:hover a{color: #ffffff;}
+.share-fi-navbar-btn.active, .share-fi-navbar-btn.active a{background-color: #853280 !important;}
+.share-fi-navbar-btn.active:hover, .share-fi-navbar-btn.active:hover a{background-color: #78036a !important;}
+.share-fi-navbar-btn:hover, .share-fi-navbar-btn:hover a{background-color: #777777 !important;}
+
 /* LOGIN */
 .template-body{
     height: 100%;
@@ -36,13 +96,33 @@
     background: radial-gradient(ellipse at center,  #5d5d5d 0%,#3b3b3b 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5d5d5d', endColorstr='#3b3b3b',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
-.login-button-container{
+.center-button-container{
     width: 100%;
 }
-.login-button-container .btn{
+.center-button-container .btn{
     padding: 6px 40px;
 }
 .login-forgot-link, .login-forgot-link:hover{
     color: #FFF;
     font-size: 11px;
+}
+
+/* LOADING */
+.icon-loading{
+    color: #FFF;
+    font-size: 80px;
+    margin-top: 30px;
+    text-shadow: 3px 3px 0px #78036a;
+    filter: dropshadow(color=#78036a, offx=3, offy=3);
+}
+
+/* HOME */
+#homeBtn{
+    max-height: 200px;
+    margin:0 auto;
+}
+.big-icon-container{
+    margin-top: 30px;
+    font-size: 100px;
+    color: #ffffff;
 }
