@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.os.Handler;
 import android.webkit.*;
 
 import android.content.Context;
@@ -34,29 +33,17 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void requestWifiShare() {
-            new Thread(new Runnable() {
-                public void run() {
-                    requestWifiShare();
-                }
-            }).start();
+            requestWifiShare();
         }
 
         @JavascriptInterface
         public void enableWifiSharing() {
-            new Thread(new Runnable() {
-                public void run() {
-                    startSharing();
-                }
-            }).start();
+            startSharing();
         }
 
         @JavascriptInterface
         public void disableWifiSharing() {
-            new Thread(new Runnable() {
-                public void run() {
-                    stopSharing();
-                }
-            }).start();
+            stopSharing();
         }
     }
 
@@ -69,7 +56,7 @@ public class MainActivity extends Activity {
     final String APP_PREFIX = "SHFI";
     final String DONATE_PREFIX = "D";
     final String REQUEST_PREFIX = "R";
-    final String USER_IDENTIFIER = "31231";
+    final String USER_IDENTIFIER = "TEST";
     final String DONATE_FILTER = APP_PREFIX+"-"+DONATE_PREFIX;
     final String REQUEST_FILTER = APP_PREFIX+"-"+REQUEST_PREFIX;
     final String DONATE_SSID = DONATE_FILTER+"-"+USER_IDENTIFIER;
@@ -77,7 +64,10 @@ public class MainActivity extends Activity {
 
     boolean searchingForSharedWifi = false;
     boolean sharingLookupEnabled = false;
-    boolean currentlySharing = false;
+    boolean currentlySharingWifi = false;
+    boolean firstClientConnected = false;
+    boolean hasInternetConnection = false;
+    boolean connectedToSharedWifi = false;
 
     Integer connectedClients = 0;
 
@@ -121,16 +111,18 @@ public class MainActivity extends Activity {
 
         webView.setWebChromeClient(new WebChromeClient());
 
-        if(isNetworkAvailable() || true){
+        if(hasInternetConnection = isNetworkAvailable()){
             webView.loadUrl("file:///android_asset/login.html");
         }else{
             webView.loadUrl("file:///android_asset/home.html");
         }
 
-        //currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
-        //currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-        //enableAp();
-
+        currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
+        currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+        disableAp();
+        enableAp();
+        //requestWifiShare();
+        currentlySharingWifi = true;
         clientsWatcher();
 	}
 
@@ -140,23 +132,74 @@ public class MainActivity extends Activity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    public void internetWatcher(){
+        new Thread(new Runnable() {//Clients watcher
+            public void run() {
+                boolean internetAvailable = isNetworkAvailable();
+                if(hasInternetConnection!=internetAvailable){
+                    if(internetAvailable){//Se conecto
+                        if(connectedToSharedWifi){//Se conecto a la red donada
+
+                        }
+                    }else{//Se desconecto
+
+                    }
+                }
+                hasInternetConnection=internetAvailable;
+                sleep(15000);
+            }
+        }).start();
+    }
+
     public void clientsWatcher(){
         new Thread(new Runnable() {//Clients watcher
             public void run() {
                 while(true){
-                    ArrayList clients =  wifiApManager.getClientList(true,1000);
-                    Integer clientsCount = clients.size();
-                    if(clientsCount>0 && connectedClients==0){
+                    if(currentlySharingWifi){
+                        ArrayList clients =  wifiApManager.getClientList(true,1000);
+                        Integer clientsCount = clients.size();
+                        if(clientsCount>0 && connectedClients==0){//Se acaba de conectar el primer cliente
+                            if(!firstClientConnected){
+                                //TODO notify that first user has connected
+                                startCountdown();
+                                firstClientConnected = true;
+                            }
+                        }
+                        if(clientsCount==0 && connectedClients>0){//Se desconectaron todos los usuarios
+                            String a = "a";
 
+                        }
+                        if(clientsCount!=connectedClients){
+                            showNotification("Share-fi",clientsCount.toString()+" usuario conectado",MainActivity.this);
+                            connectedClients = clientsCount;
+                        }
+                        sleep(30000);
                     }
-                    if(clientsCount!=connectedClients){
-                        showNotification("Share-fi",clientsCount.toString()+" usuario conectado",MainActivity.this);
-                        connectedClients = clientsCount;
-                    }
-                    sleep(30000);
                 }
             }
         }).start();
+    }
+
+    public void startCountdown(){
+        new Thread(new Runnable() {
+            public void run() {
+                sleep(2000);
+                disableAp();
+                resetSharingVars();
+            }
+        }).start();
+    }
+
+    public void resetSharingVars(){
+        sharingLookupEnabled = false;
+        currentlySharingWifi = false;
+        firstClientConnected = false;
+        connectedClients = 0;
+    }
+
+    public void resetRequestVars(){
+        connectedToSharedWifi = false;
+        searchingForSharedWifi = false;
     }
 	
 	public static void showNotification( String contentTitle, String contentText, Context arg0 ) {
@@ -180,49 +223,67 @@ public class MainActivity extends Activity {
 
 
     public void requestWifiShare(){
-        searchingForSharedWifi = true;
-        currentNetConfig.SSID = REQUEST_SSID;
-        currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-        enableAp();
-        Integer numberOfCycles = 0;
-        while(searchingForSharedWifi){
-            sleep(20000);
-            List<ScanResult> accessPoints = getAccessPoints();
-            List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
-            if(filteredAccessPoints.size()>0){
-                ScanResult bestAccessPointAvailable = getBestResult(filteredAccessPoints);
-                wifiConnectToAccessPoint(bestAccessPointAvailable);
-                searchingForSharedWifi=false;
-                break;
+        if(searchingForSharedWifi || connectedToSharedWifi || isNetworkAvailable())return;
+
+        new Thread(new Runnable() {//Clients watcher
+            public void run() {
+                searchingForSharedWifi = true;
+                currentNetConfig.SSID = REQUEST_SSID;
+                currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                enableAp();
+                Integer numberOfCycles = 0;
+                while(searchingForSharedWifi){
+                    sleep(20000);
+                    List<ScanResult> accessPoints = getAccessPoints();
+                    List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
+                    if(filteredAccessPoints.size()>0){
+                        ScanResult bestAccessPointAvailable = getBestResult(filteredAccessPoints);
+                        wifiConnectToAccessPoint(bestAccessPointAvailable);
+                        connectedToSharedWifi = true;
+                        //TODO notify ui that connection has been made! AHUEVO!
+                        searchingForSharedWifi=false;
+                        break;
+                    }
+                    numberOfCycles++;
+                }
             }
-            numberOfCycles++;
-        }
+        }).start();
     }
 
     public void startSharing(){
-        connectedClients = 0;
-        sharingLookupEnabled = true;
-        while(sharingLookupEnabled){
-            List<ScanResult> accessPoints = getAccessPoints();
-            List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,REQUEST_FILTER);
-            if(filteredAccessPoints.size()>0){
-                currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
-                currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-                enableAp();
-                currentlySharing=true;
-                sharingLookupEnabled=false;
-                sleep(1000);
-                break;
+        if(currentlySharingWifi || sharingLookupEnabled || !isNetworkAvailable())return;//It is already searching for connections
+
+        new Thread(new Runnable() {//Clients watcher
+            public void run() {
+                connectedClients = 0;
+                sharingLookupEnabled = true;
+                while(sharingLookupEnabled || isNetworkAvailable()){
+                    List<ScanResult> accessPoints = getAccessPoints();
+                    List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,REQUEST_FILTER);
+                    if(filteredAccessPoints.size()>0){
+                        currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
+                        currentNetConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                        enableAp();
+                        currentlySharingWifi = true;
+                        sharingLookupEnabled=false;
+                        sleep(1000);
+                        break;
+                    }
+                    sleep(15000);
+                }
             }
-            sleep(15000);
-        }
+        }).start();
     }
 
     public void stopSharing(){
-        currentlySharing=false;
-        disableAp();
-        connectedClients = 0;
-        sleep(1000);
+        new Thread(new Runnable() {//Clients watcher
+            public void run() {
+                currentlySharingWifi =false;
+                disableAp();
+                resetSharingVars();
+                sleep(1000);
+            }
+        }).start();
     }
 
     public boolean enableAp(){
@@ -303,6 +364,10 @@ public class MainActivity extends Activity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void messageFromTheUnderworld(String eventName,String data){
+        webView.loadUrl("javascript:messageFromTheUnderworld('"+eventName+"','"+data+"')");
     }
 
 }

@@ -58,3 +58,22 @@ function saveToken(token){
     docCookies.setItem('token', token);
     return true;
 }
+
+function messageFromTheUnderworld(eventName,data){
+    if(eventsHandler[eventName])eventsHandler[eventName](data);
+}
+
+eventsHandler = {
+    onWifiConnected : function(data){
+
+    },
+    onWifiDisconnected : function(data){
+
+    },
+    onClientsCountChanged : function(data){
+
+    },
+    onYourTimeIsUp : function(data){
+
+    }
+}
