@@ -338,7 +338,7 @@ public class MainActivity extends Activity {
         wifiConnectConfiguration.allowedProtocols.set(WifiConfiguration.Protocol.RSN);*/
 
         wifiConnectConfiguration.SSID = "\""+accessPoint.SSID+"\"";
-        currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        wifiConnectConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
         //wifiConnectConfiguration.preSharedKey  = "\"\"olakase123\"\"";
 
         //TODO generate pass
