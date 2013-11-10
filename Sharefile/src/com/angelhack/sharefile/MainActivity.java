@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
 
         if(hasInternetConnection = isNetworkAvailable()){
             webView.loadUrl("file:///android_asset/login.html");
-            startSharing();
+            //startSharing();
         }else{
             webView.loadUrl("file:///android_asset/home.html");
         }
@@ -148,6 +148,7 @@ public class MainActivity extends Activity {
         //List<ScanResult> list = filterAccessPoints(getAccessPoints(),DONATE_FILTER);
         //ScanResult sr = getBestResult(list);
         //wifiConnectToAccessPoint(sr);
+        startSharing();
 
 	}
 
