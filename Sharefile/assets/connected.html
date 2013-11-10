@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Share-fi!</title>
+
+    <!-- CSS FILES -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+</head>
+<body class="template-body">
+    <div class="container">
+        <nav class="navbar navbar-share-fi navbar-fixed-top" role="navigation">
+            <ul class="nav navbar-nav share-fi-navbar">
+                <li class="share-fi-navbar-btn active"><a href="#"><i class="fa fa-home"></i></a></li>
+                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-user"></i></a></li>
+                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-cog"></i></a></li>
+            </ul>
+        </nav>
+        <div class="row searching-title-container">
+            <div class="col-xs-10 col-xs-offset-1 text-center">
+                You are now connected to a hotspot that allows you:
+            </div>
+        </div>
+        <div class="row connected-limit-container">
+            <div class="col-xs-12 text-center limit">
+                <span id="connection-time">5:00</span> time
+            </div>
+            <div class="col-xs-12 text-center current">
+                <span id="connection-time-left">2:37</span>
+            </div>
+        </div>
+        <div class="row connected-limit-container">
+            <div class="col-xs-12 text-center limit">
+                or <span id="connection-data">10</span>mb
+            </div>
+            <div class="col-xs-12 text-center current">
+                <span id="connection-data-left">1.54</span><small>mb</small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <button class="btn btn-share-fi">Disconnect<i class="fa fa-unlink margin-left"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="sponsor-container"></div>
+</body>
+    <!-- JS FILES -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+</html>
