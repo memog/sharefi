@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void uiRequestWifiShare() {
-            requestWifiShare();
+            fastRequestWifiShare();
         }
 
         @JavascriptInterface
@@ -72,6 +72,7 @@ public class MainActivity extends Activity {
     boolean firstClientConnected = false;
     boolean hasInternetConnection = false;
     boolean connectedToSharedWifi = false;
+    boolean fastSharingEnabled = false;
 
     Integer connectedClients = 0;
 
@@ -127,7 +128,7 @@ public class MainActivity extends Activity {
 
         if(hasInternetConnection = isNetworkAvailable()){
             webView.loadUrl("file:///android_asset/login.html");
-            //startSharing();
+            fastSharing();
         }else{
             webView.loadUrl("file:///android_asset/home.html");
         }
@@ -156,7 +157,7 @@ public class MainActivity extends Activity {
         //List<ScanResult> list = filterAccessPoints(getAccessPoints(),DONATE_FILTER);
         //ScanResult sr = getBestResult(list);
         //wifiConnectToAccessPoint(sr);
-        startSharing();
+        //startSharing();
         //getAccessPoints();
 	}
 
@@ -218,6 +219,18 @@ public class MainActivity extends Activity {
                         sleep(15000);
                     }
                 }
+            }
+        }).start();
+    }
+
+    public void fastSharing(){
+        new Thread(new Runnable() {
+            public void run() {
+                currentlySharingWifi=true;
+                fastSharingEnabled = true;
+                currentNetConfig.SSID = "\""+DONATE_SSID+"\"";
+                currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                enableAp();
             }
         }).start();
     }
@@ -296,6 +309,29 @@ public class MainActivity extends Activity {
         }).start();
     }
 
+    public void fastRequestWifiShare(){
+        new Thread(new Runnable() {//Clients watcher
+            public void run() {
+                searchingForSharedWifi = true;
+                Integer numberOfCycles = 0;
+                while(searchingForSharedWifi){
+                    List<ScanResult> accessPoints = getAccessPoints();
+                    List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
+                    if(filteredAccessPoints.size()>0){
+                        ScanResult bestAccessPointAvailable = getBestResult(filteredAccessPoints);
+                        wifiConnectToAccessPoint(bestAccessPointAvailable);
+                        connectedToSharedWifi = true;
+                        //TODO notify ui that connection has been made! AHUEVO!
+                        searchingForSharedWifi=false;
+                        break;
+                    }
+                    if(numberOfCycles++>50)break;
+                    sleep(3000);
+                }
+            }
+        }).start();
+    }
+
     public void startSharing(){
         if(currentlySharingWifi || sharingLookupEnabled)return;//It is already searching for connections
 
@@ -364,13 +400,13 @@ public class MainActivity extends Activity {
 
         //TODO generate pass
         Integer networkId =  wifiManager.addNetwork(wifiConnectConfiguration);
-        sleep(1000);
+        sleep(2000);
         wifiManager.disconnect();
-        sleep(1000);
+        sleep(2000);
         wifiManager.enableNetwork(networkId, true);
-        sleep(1000);
+        sleep(2000);
         wifiManager.reconnect();
-        sleep(1000);
+        sleep(2000);
     }
 
     public List<ScanResult> filterAccessPoints(List<ScanResult> accessPoints,String SSIDPrefix){
