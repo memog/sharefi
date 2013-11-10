@@ -264,10 +264,12 @@ public class MainActivity extends Activity {
                 searchingForSharedWifi = true;
                 currentNetConfig.SSID = "\""+REQUEST_SSID+"\"";
                 currentNetConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-                enableAp();
                 Integer numberOfCycles = 0;
                 while(searchingForSharedWifi){
+                    enableAp();
                     sleep(30000);
+                    disableAp();
+                    sleep(1000);
                     List<ScanResult> accessPoints = getAccessPoints();
                     List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,DONATE_FILTER);
                     if(filteredAccessPoints.size()>0){
@@ -279,7 +281,7 @@ public class MainActivity extends Activity {
                         searchingForSharedWifi=false;
                         break;
                     }
-                    numberOfCycles++;
+                    if(numberOfCycles++>20)break;
                 }
             }
         }).start();
