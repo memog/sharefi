@@ -12,9 +12,9 @@
     <div class="container">
         <nav class="navbar navbar-share-fi navbar-fixed-top" role="navigation">
             <ul class="nav navbar-nav share-fi-navbar">
-                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-home"></i></a></li>
                 <li class="share-fi-navbar-btn active"><a href="#"><i class="fa fa-user"></i></a></li>
-                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-cog"></i></a></li>
+                <li class="share-fi-navbar-btn"><a href="#" onclick="changeLocation('settings.html'); return false;"><i class="fa fa-cog"></i></a></li>
+                <li class="share-fi-navbar-btn"><a href="#" onclick="logout(); return false;"><i class="fa fa-sign-out"></i></a></li>
             </ul>
         </nav>
         <div class="row searching-title-container">
@@ -27,12 +27,13 @@
                 <small>Available points</small>
             </div>
             <div class="col-xs-12 text-center current">
-                <span id="profile-points">1,504</span>
+                <span id="profile-points"></span>
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-                <div class="alert alert-info"><strong>Cool!</strong> The coupon has been sent to your email <i class="fa fa-check margin-left"></i></div>
+                <div id="alert-success" class="alert alert-info" style="display: none;"><strong>Cool!</strong> The coupon has been sent to your email <i class="fa fa-check margin-left"></i></div>
+                <div id="alert-fail" class="alert alert-warning" style="display: none;"><strong>Wait!</strong> You don't have point enough, share more yor internet ;)</div>
             </div>
         </div>
         <div class="row">
@@ -44,24 +45,24 @@
                     <ul class="list-group">
                         <li class="list-group-item">
                             <strong class="margin-right">1,000</strong><em>Starbucks Venti</em>
-                            <button class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
+                            <button onclick="getCoupon(1000);" class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
                         </li>
                         <li class="list-group-item">
                             <strong class="margin-right">900</strong><em>Starbucks Grande</em>
-                            <button class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
+                            <button onclick="getCoupon(900);" class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
                         </li>
                         <li class="list-group-item">
                             <strong class="margin-right">800</strong><em>Starbucks Tall</em>
-                            <button class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
+                            <button onclick="getCoupon(800);" class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
                         </li>
                         <li class="list-group-item">
                             <strong class="margin-right">700</strong><em>Starbucks Cheesecake</em>
-                            <button class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
+                            <button onclick="getCoupon(700);" class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
                         </li>
 
                         <li class="list-group-item">
                             <strong class="margin-right">600</strong><em>Starbucks Muffin</em>
-                            <button class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
+                            <button onclick="getCoupon(600);" class="btn btn-default btn-sm pull-right"><i class="fa fa-certificate margin-right color-share-fi"></i>Get reward</button>
                         </li>
                     </ul>
                 </div>
@@ -70,7 +71,10 @@
     </div>
     <div class="sponsor-container"></div>
 </body>
-    <!-- JS FILES -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+    var view = 'profile';
+</script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
 </html>

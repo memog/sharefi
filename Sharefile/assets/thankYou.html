@@ -12,9 +12,7 @@
     <div class="container">
         <nav class="navbar navbar-share-fi navbar-fixed-top" role="navigation">
             <ul class="nav navbar-nav share-fi-navbar">
-                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-home"></i></a></li>
-                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-user"></i></a></li>
-                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-cog"></i></a></li>
+                <li class="share-fi-navbar-btn"><a href="#" onclick="changeLocation('home.html'); return false;"><i class="fa fa-home"></i></a></li>
             </ul>
         </nav>
         <div class="row big-icon-container">
@@ -31,14 +29,17 @@
         <div class="row">
             <div class="col-xs-12 text-center">
                 <div class="center-button-container">
-                    <button class="btn btn-share-fi">Find new hotspot</button>
+                    <button class="btn btn-share-fi" onclick="findHotspot();">Find new hotspot</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="sponsor-container"></div>
 </body>
-    <!-- JS FILES -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+    var view = 'thankYou';
+</script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
 </html>

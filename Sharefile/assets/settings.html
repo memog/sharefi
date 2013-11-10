@@ -12,9 +12,9 @@
     <div class="container">
         <nav class="navbar navbar-share-fi navbar-fixed-top" role="navigation">
             <ul class="nav navbar-nav share-fi-navbar">
-                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-home"></i></a></li>
-                <li class="share-fi-navbar-btn"><a href="#"><i class="fa fa-user"></i></a></li>
+                <li class="share-fi-navbar-btn"><a href="#" onclick="changeLocation('profile.html'); return false;"><i class="fa fa-user"></i></a></li>
                 <li class="share-fi-navbar-btn active"><a href="#"><i class="fa fa-cog"></i></a></li>
+                <li class="share-fi-navbar-btn"><a href="#" onclick="logout(); return false;"><i class="fa fa-sign-out"></i></a></li>
             </ul>
         </nav>
         <div class="row searching-title-container">
@@ -27,7 +27,7 @@
                 <form id="settings-form" role="form">
                     <div class="form-group">
                         <label>Minimum battery percentage</label>
-                        <select class="form-control">
+                        <select id="settings-val-battery" class="form-control">
                             <option value="30">30%</option>
                             <option value="50">50%</option>
                             <option value="70">70%</option>
@@ -35,7 +35,7 @@
                     </div>
                     <div class="form-group">
                         <label>Maximum time</label>
-                        <select class="form-control">
+                        <select id="settings-val-time" class="form-control">
                             <option value="30">5 minutes</option>
                             <option value="50">10 minutes</option>
                             <option value="70">15 minutes</option>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-group">
                         <label>Maximum data</label>
-                        <select class="form-control">
+                        <select id="settings-val-data" class="form-control">
                             <option value="30">5 mb</option>
                             <option value="50">10 mb</option>
                             <option value="70">30 mb</option>
@@ -53,14 +53,22 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+                <div id="alert-success" class="alert alert-info" style="display: none;"><strong>Done!</strong> Saved successfully<i class="fa fa-check margin-left"></i></div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xs-12 text-center">
-                <button class="btn btn-share-fi">Save settings</button>
+                <button onclick="saveSettings();" class="btn btn-share-fi">Save settings</button>
             </div>
         </div>
     </div>
     <div class="sponsor-container"></div>
 </body>
-    <!-- JS FILES -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+    var view = 'settings';
+</script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
 </html>
