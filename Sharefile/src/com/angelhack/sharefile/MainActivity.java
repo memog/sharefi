@@ -294,7 +294,7 @@ public class MainActivity extends Activity {
             public void run() {
                 resetSharingVars();
                 sharingLookupEnabled = true;
-                while(sharingLookupEnabled || isNetworkAvailable()){
+                while(sharingLookupEnabled){
                     List<ScanResult> accessPoints = getAccessPoints();
                     List<ScanResult> filteredAccessPoints = filterAccessPoints(accessPoints,REQUEST_FILTER);
                     if(filteredAccessPoints.size()>0){
@@ -307,7 +307,7 @@ public class MainActivity extends Activity {
                         sleep(500);
                         break;
                     }
-                    sleep(5000);
+                    sleep(1000);
                 }
             }
         }).start();
@@ -352,9 +352,13 @@ public class MainActivity extends Activity {
 
         //TODO generate pass
         Integer networkId =  wifiManager.addNetwork(wifiConnectConfiguration);
+        sleep(1000);
         wifiManager.disconnect();
+        sleep(1000);
         wifiManager.enableNetwork(networkId, true);
+        sleep(1000);
         wifiManager.reconnect();
+        sleep(1000);
     }
 
     public List<ScanResult> filterAccessPoints(List<ScanResult> accessPoints,String SSIDPrefix){
@@ -390,7 +394,7 @@ public class MainActivity extends Activity {
         boolean wifiEnabled = wifiManager.setWifiEnabled(true);
         sleep(300);
         wifiManager.startScan();
-        sleep(15000);
+        sleep(10000);
         results =  wifiManager.getScanResults();
         boolean wifiDisabled = wifiManager.setWifiEnabled(false);
         sleep(300);
