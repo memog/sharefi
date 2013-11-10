@@ -5,6 +5,23 @@ import android.app.Activity;
 import android.view.Menu;
 import android.webkit.WebView;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
+import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class MainActivity extends Activity {
 
 	@Override
@@ -14,6 +31,7 @@ public class MainActivity extends Activity {
         WebView wv;  
         wv = (WebView) findViewById(R.id.webView);  
         wv.loadUrl("file:///android_asset/login.html");
+
 	}
 
 	@Override
